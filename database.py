@@ -6,11 +6,8 @@ docs:
 """
 
 from contextlib import contextmanager
-import logging
 import os
 from datetime import datetime
-
-from flask import current_app, g
 
 import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
@@ -21,12 +18,14 @@ pool = None
 def setup():
     global pool
     DATABASE_URL = os.environ['DATABASE_URL']
-    current_app.logger.info(f"creating db connection pool")
+    print(f"Creating db connection pool...")
     pool = ThreadedConnectionPool(1, 100, dsn=DATABASE_URL, sslmode='require')
 
 
 @contextmanager
 def get_db_connection():
+    if pool is None:
+        raise Exception("Database not initialized. Please check your DATABASE_URL environment variable.")
     try:
         connection = pool.getconn()
         yield connection
@@ -49,7 +48,7 @@ def get_db_cursor(commit=False):
 def add_guestbook_entry(name, message):
     """Add a new guestbook entry"""
     with get_db_cursor(True) as cur:
-        current_app.logger.info("Adding guestbook entry from %s", name)
+        print(f"Adding guestbook entry from {name}")
         cur.execute(
             "INSERT INTO guestbook (name, message, created_at) VALUES (%s, %s, %s)", 
             (name, message, datetime.now())
