@@ -6,10 +6,12 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 # Initialize database connection pool
-@app.before_first_request
 def initialize_database():
     if 'DATABASE_URL' in os.environ:
         setup()
+
+# Initialize database on app startup
+initialize_database()
 
 @app.route('/')
 @app.route('/<name>')
