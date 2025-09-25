@@ -35,18 +35,28 @@ This app now includes PostgreSQL database connectivity with connection pooling.
 4. Run the app: `python server.py`
 
 ### Database Schema:
-You'll need to create a `person` table in your database:
+You'll need to create a `guestbook` table in your database:
 ```sql
-CREATE TABLE person (
-    person_id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+CREATE TABLE guestbook (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-### API Endpoints:
-- `GET /` - Main page
-- `GET /people` - List all people (with pagination)
-- `POST /people` - Add a new person
+### Features:
+- **Guestbook Form**: Users can sign the guestbook with their name and message
+- **Entry Display**: Shows all guestbook entries with timestamps
+- **Pagination**: Displays 10 entries per page with navigation
+- **Input Validation**: Name (100 chars max), Message (500 chars max)
+- **Flash Messages**: Success/error feedback for form submissions
+- **Responsive Design**: Works on desktop and mobile devices
+
+### Routes:
+- `GET /` - Main page with link to guestbook
+- `GET /guestbook` - Display guestbook with form and entries
+- `POST /guestbook` - Add new guestbook entry
 - `GET /health` - Health check
 
 ## Render Deployment
