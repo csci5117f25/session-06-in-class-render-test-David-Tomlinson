@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Hi!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Hello from Render</h1>
@@ -9,6 +10,10 @@
     <h2>and hello to {{name}}</h2>
     {% endif %}
     
-    <p><a href="/guestbook">Sign the Guestbook</a></p>
+    
+    <!-- Navigation -->
+    <div class="navigation">
+        <p><a href="/guestbook">Sign the Guestbook</a></p>
+    </div>
 </body>
 </html>

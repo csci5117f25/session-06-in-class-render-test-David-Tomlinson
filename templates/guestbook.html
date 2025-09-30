@@ -2,9 +2,11 @@
 <html>
 <head>
     <title>Guestbook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Guestbook</h1>
+    
     
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -64,6 +66,8 @@
     
     <!-- Navigation -->
     <hr>
-    <p><a href="/">← Back to Home</a></p>
+    <div class="navigation">
+        <p><a href="/">← Back to Home</a></p>
+    </div>
 </body>
 </html>

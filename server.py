@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 import os
+from datetime import datetime
 from database import setup, add_guestbook_entry, get_guestbook_entries, get_guestbook_count
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+# Configure Flask sessions using FLASK_SECRET from environment
+app.secret_key = os.environ['FLASK_SECRET']
 
 # Initialize database connection pool
 def initialize_database():
@@ -22,14 +24,35 @@ initialize_database()
 @app.route('/')
 @app.route('/<name>')
 def hello(name=None):
+    # Track session data - visits, preferences, etc.
+    if 'visit_count' not in session:
+        session['visit_count'] = 0
+    session['visit_count'] += 1
+    
+    # Store last visit timestamp
+    session['last_visit'] = datetime.now().isoformat()
+    
+    # Remember user's preferred name if provided
+    if name:
+        session['preferred_name'] = name
+    
     return render_template('hello.html', name=name)
 
 @app.route('/guestbook', methods=['GET', 'POST'])
 def guestbook():
+    # Track guestbook visits in session
+    if 'guestbook_visits' not in session:
+        session['guestbook_visits'] = 0
+    session['guestbook_visits'] += 1
+    
     # Check if database is available
     if 'DATABASE_URL' not in os.environ:
         flash('Database not configured. Please set DATABASE_URL environment variable.', 'error')
-        return render_template('guestbook.html', entries=[], current_page=0, total_pages=0)
+        return render_template('guestbook.html', 
+                             entries=[], 
+                             current_page=0, 
+                             total_pages=0,
+)
     
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
@@ -67,10 +90,15 @@ def guestbook():
         return render_template('guestbook.html', 
                              entries=entries, 
                              current_page=page, 
-                             total_pages=total_pages)
+                             total_pages=total_pages,
+)
     except Exception as e:
         flash(f'Error loading guestbook: {str(e)}', 'error')
-        return render_template('guestbook.html', entries=[], current_page=0, total_pages=0)
+        return render_template('guestbook.html', 
+                             entries=[], 
+                             current_page=0, 
+                             total_pages=0,
+)
 
 @app.route('/health')
 def health():

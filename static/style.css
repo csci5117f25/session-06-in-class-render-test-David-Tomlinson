@@ -212,6 +212,24 @@ button[type="submit"]:hover {
     border: 1px solid #f5c6cb;
 }
 
+
+/* Navigation Links */
+.navigation a {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.navigation a:hover {
+    background-color: #2980b9;
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
     .container {
@@ -232,4 +250,5 @@ button[type="submit"]:hover {
         flex-direction: column;
         gap: 10px;
     }
+    
 }
