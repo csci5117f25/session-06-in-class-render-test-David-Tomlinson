@@ -4,8 +4,8 @@ from datetime import datetime
 from database import setup, add_guestbook_entry, get_guestbook_entries, get_guestbook_count
 
 app = Flask(__name__)
-# Configure Flask sessions using FLASK_SECRET from environment
-app.secret_key = os.environ['FLASK_SECRET']
+# Configure Flask sessions using FLASK_SECRET from environment with fallback
+app.secret_key = os.environ.get('FLASK_SECRET', 'dev-secret-key-change-in-production')
 
 # Initialize database connection pool
 def initialize_database():
