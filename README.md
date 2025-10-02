@@ -69,12 +69,15 @@ This repository is now configured for Render deployment with the following files
 ### Deploy to Render:
 1. Push this repository to GitHub
 2. Connect your GitHub repository to Render
-3. **Configure Environment Variables** in Render dashboard:
-   - `DATABASE_URL` - Will be automatically set from the PostgreSQL database
-   - `AUTH0_DOMAIN` - Your Auth0 domain (e.g., `your-app.auth0.com`)
-   - `AUTH0_CLIENT_ID` - Your Auth0 application client ID
-   - `AUTH0_CLIENT_SECRET` - Your Auth0 application client secret
-   - `APP_SECRET_KEY` - A secure random key (use: `89ddc66c48f9800eff84bd049e5f276fba5577080aafa6849a64467a8918666c`)
+3. **IMPORTANT: Set Environment Variables in Render Dashboard** (not in the YAML file):
+   - Go to your service in Render dashboard
+   - Click on "Environment" tab
+   - Add these environment variables:
+     - `AUTH0_DOMAIN` - Your Auth0 domain (e.g., `your-app.auth0.com`)
+     - `AUTH0_CLIENT_ID` - Your Auth0 application client ID
+     - `AUTH0_CLIENT_SECRET` - Your Auth0 application client secret
+     - `APP_SECRET_KEY` - A secure random key (use: `89ddc66c48f9800eff84bd049e5f276fba5577080aafa6849a64467a8918666c`)
+   - `DATABASE_URL` will be automatically set from the PostgreSQL database
 4. Render will automatically detect the `render.yaml` configuration
 5. The app will be deployed with gunicorn as the production server
 

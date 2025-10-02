@@ -3,26 +3,16 @@ services:
     name: session-06-render-test
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn --bind 0.0.0.0:$PORT server:app"
+    buildCommand: "pip install pipenv && pipenv install"
+    startCommand: "pipenv run gunicorn --bind 0.0.0.0:$PORT server:app"
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.12
-      # Database configuration - set this to your PostgreSQL database URL
+      # Database configuration - automatically set from database
       - key: DATABASE_URL
         fromDatabase:
           name: session-6-psql
           property: connectionString
-      # Auth0 configuration - you need to set these values
-      - key: AUTH0_DOMAIN
-        value: your-auth0-domain.auth0.com
-      - key: AUTH0_CLIENT_ID
-        value: your-auth0-client-id
-      - key: AUTH0_CLIENT_SECRET
-        value: your-auth0-client-secret
-      # Flask secret key - generate a secure random key
-      - key: APP_SECRET_KEY
-        value: your-secret-key-here
 
 databases:
   - name: session-6-psql
