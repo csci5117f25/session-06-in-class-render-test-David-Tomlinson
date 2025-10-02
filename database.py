@@ -50,8 +50,8 @@ def add_guestbook_entry(name, message):
     with get_db_cursor(True) as cur:
         print(f"Adding guestbook entry from {name}")
         cur.execute(
-            "INSERT INTO guestbook (name, message, created_at) VALUES (%s, %s, %s)", 
-            (name, message, datetime.now())
+            "INSERT INTO guestbook (name, message) VALUES (%s, %s)", 
+            (name, message)
         )
 
 def get_guestbook_entries(page=0, entries_per_page=10):
