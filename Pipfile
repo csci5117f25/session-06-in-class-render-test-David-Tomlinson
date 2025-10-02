@@ -7,8 +7,11 @@ name = "pypi"
 flask = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
-psycopg2 = "*"
 psycopg = "*"
+authlib = "*"
+requests = "*"
+dotenv = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

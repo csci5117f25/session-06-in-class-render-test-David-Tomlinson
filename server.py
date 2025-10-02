@@ -1,11 +1,28 @@
+import json
+from os import environ as env
+from urllib.parse import quote_plus, urlencode
+
+from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 import os
 from datetime import datetime
 from database import setup, add_guestbook_entry, get_guestbook_entries, get_guestbook_count
 
 app = Flask(__name__)
-# Configure Flask sessions using FLASK_SECRET from environment with fallback
-app.secret_key = os.environ.get('FLASK_SECRET', 'dev-secret-key-change-in-production')
+app.secret_key = env.get("APP_SECRET_KEY")
+
+oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
 
 # Initialize database connection pool
 def initialize_database():
@@ -36,7 +53,11 @@ def hello(name=None):
     if name:
         session['preferred_name'] = name
     
-    return render_template('hello.html', name=name)
+    # Pass user session data to template
+    user_session = session.get('user')
+    pretty = json.dumps(user_session, indent=4) if user_session else None
+    
+    return render_template('hello.html', name=name, session=user_session, pretty=pretty)
 
 @app.route('/guestbook', methods=['GET', 'POST'])
 def guestbook():
@@ -103,3 +124,38 @@ def guestbook():
 @app.route('/health')
 def health():
     return jsonify({'status': 'healthy', 'database': 'DATABASE_URL' in os.environ})
+
+#AUTH0 ROUTES
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect(url_for("hello"))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("hello", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
+
+@app.route("/")
+def home():
+    return render_template("hello.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000))

@@ -9,7 +9,15 @@
     {% if name %}
     <h2>and hello to {{name}}</h2>
     {% endif %}
-    
+
+    {% if session %}
+        <h1>Welcome {{session.userinfo.name if session.userinfo and session.userinfo.name else 'User'}}!</h1>
+        <p><a href="/logout">Logout</a></p>
+        <div><pre>{{pretty}}</pre></div>
+    {% else %}
+        <h1>Welcome Guest</h1>
+        <p><a href="/login">Login</a></p>
+    {% endif %}
     
     <!-- Navigation -->
     <div class="navigation">
