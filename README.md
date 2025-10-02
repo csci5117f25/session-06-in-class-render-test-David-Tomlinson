@@ -69,7 +69,31 @@ This repository is now configured for Render deployment with the following files
 ### Deploy to Render:
 1. Push this repository to GitHub
 2. Connect your GitHub repository to Render
-3. Add a PostgreSQL database in Render
-4. Set the `DATABASE_URL` environment variable in Render
-5. Render will automatically detect the `render.yaml` configuration
-6. The app will be deployed with gunicorn as the production server
+3. **Configure Environment Variables** in Render dashboard:
+   - `DATABASE_URL` - Will be automatically set from the PostgreSQL database
+   - `AUTH0_DOMAIN` - Your Auth0 domain (e.g., `your-app.auth0.com`)
+   - `AUTH0_CLIENT_ID` - Your Auth0 application client ID
+   - `AUTH0_CLIENT_SECRET` - Your Auth0 application client secret
+   - `APP_SECRET_KEY` - A secure random key (use: `89ddc66c48f9800eff84bd049e5f276fba5577080aafa6849a64467a8918666c`)
+4. Render will automatically detect the `render.yaml` configuration
+5. The app will be deployed with gunicorn as the production server
+
+### Auth0 Setup:
+1. Create an Auth0 account at https://auth0.com
+2. Create a new application (Single Page Application type)
+3. Configure allowed callback URLs: `https://your-app-name.onrender.com/callback`
+4. Configure allowed logout URLs: `https://your-app-name.onrender.com`
+5. Copy the Domain, Client ID, and Client Secret to your Render environment variables
+
+### Database Setup:
+The `render.yaml` file includes a PostgreSQL database configuration. After deployment:
+1. Connect to your database using the connection string from Render
+2. Run the schema.sql file to create the guestbook table:
+   ```sql
+   CREATE TABLE guestbook (
+       id SERIAL PRIMARY KEY,
+       name VARCHAR(100) NOT NULL,
+       message TEXT NOT NULL,
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+   ```
